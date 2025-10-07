@@ -49,3 +49,5 @@ jobs:
             cd /path/on/server/project
             docker compose pull
             docker compose up -d --remove-orphans
+
+#retry
