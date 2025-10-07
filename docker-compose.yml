@@ -1,0 +1,40 @@
+services:
+  backend:
+    build: ./02-backend_spring-boot-rest-api
+    container_name: backend-ecom
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql_ecom:3306/mysql_ecom?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    depends_on:
+      - mysql_ecom
+    networks:
+      - ecom-net
+    command: sh -c "./wait-for-mysql.sh mysql_ecom && mvn spring-boot:run"
+
+  frontend:
+    build: ./03-frontend_angular-ecommerce
+    container_name: frontend-ecom
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - ecom-net
+
+  mysql_ecom:
+    image: mysql:8.0
+    container_name: mysql_ecom
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mysql_ecom
+    ports:
+      - "3306:3306"
+    networks:
+      - ecom-net
+
+networks:
+  ecom-net:
+    driver: bridge

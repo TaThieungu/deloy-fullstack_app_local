@@ -1,0 +1,29 @@
+services:
+  backend:
+    build: ./02-backend_spring-boot-rest-api
+    container_name: backend-ecom
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql_ecom:3306/mysql_ecom?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql_ecom
+    networks:
+      - ecom-net
+
+  frontend:
+    build: ./03-frontend_angular-ecommerce
+    container_name: frontend-ecom
+    command: ["nginx", "-g", "daemon off;"]
+    ports:
+      - "3000:80" # để test frontend dễ hơn
+    depends_on:
+      - backend
+    networks:
+      - ecom-net
+
+networks:
+  ecom-net:
+    driver: bridge
